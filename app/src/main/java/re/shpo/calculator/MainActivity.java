@@ -10,11 +10,14 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AsyncResponse {
+    PiComputeTask asyncTask = new PiComputeTask();
 
     private EditText input1, input2, result;
+    private ProgressBar progressBar;
 
     LogicService logicService;
     boolean mBound = false;
@@ -61,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
         input1 = findViewById(R.id.input_1);
         input2 = findViewById(R.id.input_2);
         result = findViewById(R.id.input_result);
+        progressBar = findViewById(R.id.progressBar);
+
+        asyncTask.delegate = this;
     }
 
     public void addButtonClick(View v) {
@@ -114,5 +120,20 @@ public class MainActivity extends AppCompatActivity {
                 result.setText("Invalid input");
             }
         }
+    }
+
+    public void piButtonClick(View v) {
+        progressBar.setProgress(0);
+    }
+
+    @Override
+    public void processFinish(Double output) {
+        input1.setText(String.valueOf(output));
+        asyncTask.cancel(true);
+    }
+
+    @Override
+    public void processUpdate(Integer output) {
+
     }
 }
